@@ -53,7 +53,12 @@ fun transformText(explanation: String): String {
 @Composable
 fun Main(apiService: NasaApiService, navController: NavController) {
 
+
     var apodListState by remember { mutableStateOf(emptyList<ApodResponse>()) }
+
+    var isLoading by remember {
+        mutableStateOf(true)
+    }
 
     LaunchedEffect(apiService) {
         apodListState += ApodList(apiService).getApodList().value
@@ -65,69 +70,80 @@ fun Main(apiService: NasaApiService, navController: NavController) {
             .fillMaxWidth()
     ) {
 
-        LazyColumn(
-            modifier = Modifier
-                .padding(8.dp)
-                .fillMaxWidth()
-        ) {
+        if (apodListState.isNotEmpty()) {
+            isLoading = false
+        }
 
-            items(apodListState.reversed()) { apod ->
+        ShimmerListItem(
+            isLoading = isLoading,
+            contentAfterLoading = {
 
-                Card(
-                    colors = CardDefaults.cardColors(containerColor = Color.Black),
-                    shape = RoundedCornerShape(8.dp),
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 10.dp
-                    ),
+                LazyColumn(
                     modifier = Modifier
+                        .padding(8.dp)
                         .fillMaxWidth()
-                        .padding(vertical = 8.dp)
-                        .clickable {
-                            val imageUrl = Uri.parse(apod.hdurl).lastPathSegment
-                            val formattedDate = transformDateFormat(apod.date)
-                            val text = transformText(apod.explanation)
-                            val title = transformText(apod.title)
-                            navController.navigate(
-                                route = AppScreens.Detail.route +
-                                        "/$imageUrl/$formattedDate/$title/$text/${apod.date}"
-                            )
-                        }
-                        .shadow(
-                            elevation = 4.dp,
-                            shape = RoundedCornerShape(20.dp),
-                            spotColor = Color.White
-                        )
                 ) {
-                    Column(
-                        modifier = Modifier.padding(12.dp)
-                    ) {
-                        Image(
+
+                    items(apodListState.reversed()) { apod ->
+
+                        isLoading = true
+
+                        Card(
+                            colors = CardDefaults.cardColors(containerColor = Color.Black),
+                            shape = RoundedCornerShape(8.dp),
+                            elevation = CardDefaults.cardElevation(
+                                defaultElevation = 10.dp
+                            ),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(200.dp)
-                                .clip(RoundedCornerShape(10.dp)),
-                            contentScale = ContentScale.Crop,
-                            contentDescription = apod.title,
-                            painter = rememberImagePainter(data = apod.url),
-                        )
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 8.dp)
+                                .padding(vertical = 8.dp)
+                                .clickable {
+                                    val imageUrl = Uri.parse(apod.hdurl).lastPathSegment
+                                    val formattedDate = transformDateFormat(apod.date)
+                                    val text = transformText(apod.explanation)
+                                    val title = transformText(apod.title)
+                                    navController.navigate(
+                                        route = AppScreens.Detail.route +
+                                                "/$imageUrl/$formattedDate/$title/$text/${apod.date}"
+                                    )
+                                }
+                                .shadow(
+                                    elevation = 4.dp,
+                                    shape = RoundedCornerShape(20.dp),
+                                    spotColor = Color.White
+                                )
                         ) {
-                            Text(
-                                text = apod.title,
-                                fontSize = 18.sp,
-                                color = Color.White
-                            )
+                            Column(
+                                modifier = Modifier.padding(12.dp)
+                            ) {
+                                Image(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(200.dp)
+                                        .clip(RoundedCornerShape(10.dp)),
+                                    contentScale = ContentScale.Crop,
+                                    contentDescription = apod.title,
+                                    painter = rememberImagePainter(data = apod.url),
+                                )
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 8.dp)
+                                ) {
+                                    Text(
+                                        text = apod.title,
+                                        fontSize = 18.sp,
+                                        color = Color.White
+                                    )
+                                }
+
+                            }
                         }
 
                     }
                 }
-
-            }
-        }
+            })
     }
 }
 

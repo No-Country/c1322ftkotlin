@@ -55,6 +55,10 @@ fun DetailScreen(
                         .height(400.dp)
                         .fillMaxWidth()
                         .clickable {
+                            navController.navigate(
+                                route = AppScreens.ZoomImage.route +
+                                        "/$image/$formattedDate"
+                            )
 
 
                         },

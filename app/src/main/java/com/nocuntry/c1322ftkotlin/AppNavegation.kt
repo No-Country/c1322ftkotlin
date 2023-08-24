@@ -11,6 +11,7 @@ import androidx.navigation.navArgument
 import com.nocuntry.c1322ftkotlin.model.NasaApiService
 import com.nocuntry.c1322ftkotlin.screen.DetailScreen
 import com.nocuntry.c1322ftkotlin.screen.Main
+import com.nocuntry.c1322ftkotlin.screen.ZoomableImage
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -49,7 +50,22 @@ fun AppNavigation(apiService: NasaApiService) {
                 it.arguments?.getString("date")
             )
         }
+        composable(route = AppScreens.ZoomImage.route + "/{image}/{formattedDate}",
+            arguments = listOf(navArgument(name = "image") {
+                type = NavType.StringType
+            },
+                navArgument(name = "formattedDate") {
+                    type = NavType.StringType
+                }
+            )) {
+            ZoomableImage(
+                navController,
+                it.arguments?.getString("image"),
+                it.arguments?.getString("formattedDate")
+            )
+        }
     }
+
 
 }
 
