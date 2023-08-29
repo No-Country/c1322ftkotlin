@@ -3,6 +3,7 @@ package com.nocuntry.c1322ftkotlin
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -18,10 +19,11 @@ import com.nocuntry.c1322ftkotlin.screen.ZoomableImage
 @Composable
 fun AppNavigation(apiService: NasaApiService) {
     val navController = rememberNavController()
+    val iaviewModel = viewModel<IAViewModel>()
     NavHost(navController = navController, startDestination = "home") {
 
         composable(route = AppScreens.Home.route) {
-            Main(apiService, navController)
+            Main(apiService, navController, iaviewModel)
         }
 
         composable(route = AppScreens.Detail.route + "/{image}/{formattedDate}/{title}/{explanation}/{date}",
@@ -47,7 +49,8 @@ fun AppNavigation(apiService: NasaApiService) {
                 it.arguments?.getString("formattedDate"),
                 it.arguments?.getString("title"),
                 it.arguments?.getString("explanation"),
-                it.arguments?.getString("date")
+                it.arguments?.getString("date"),
+                iaviewModel
             )
         }
         composable(route = AppScreens.ZoomImage.route + "/{image}/{formattedDate}",
