@@ -24,6 +24,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.unit.sp
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.GoogleAuthProvider
@@ -31,9 +34,7 @@ import com.nocuntry.c1322ftkotlin.AppScreens
 import com.nocuntry.c1322ftkotlin.R
 
 @Composable
-fun AuthScreen(navController: NavHostController,
-               onAuthStateChanged: (AuthState) -> Unit) {
-
+fun AuthScreen(navController: NavHostController) {
     val viewModel: AuthViewModel = viewModel()
 
     var email by remember { mutableStateOf("") }
@@ -41,15 +42,15 @@ fun AuthScreen(navController: NavHostController,
     var confirmPassword by remember { mutableStateOf("") }
 
     val context = LocalContext.current
-    val googleSignInClient = remember(context) {
-        createGoogleSignInClient(context)
-    }
+    val googleSignInClient = createGoogleSignInClient(context)
     val googleSignInLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
         val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-        handleGoogleSignInResult(task, onAuthStateChanged)
+        handleGoogleSignInResult(task) { authState ->
+        }
     }
+
 
     Column(
         modifier = Modifier
@@ -65,19 +66,20 @@ fun AuthScreen(navController: NavHostController,
             modifier = Modifier.size(100.dp)
         )
         Text(
-            text = "Welcome to the Astronomy App",
-            Modifier.size(12.dp),//tambien se puede modificar el saludo de incio de la app
-            color = Color.White  // Aplicar el color de texto al color que se quiera
+            text = "Welcome to the Astronomy App", //tambien se puede modificar el saludo de incio de la app
+            fontSize = 18.sp,
+            color = Color.White,  // Aplicar el color de texto de bienvenida al color que se quiera
+            fontStyle = FontStyle.Italic
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
             value = email,
-
             onValueChange = { email = it },
             label = { Text("Email", color = Color.White) },
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email)
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
+            textStyle = TextStyle(color = Color.White)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -87,7 +89,8 @@ fun AuthScreen(navController: NavHostController,
             onValueChange = { password = it },
             label = { Text("Password", color = Color.White) },
             visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password)
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
+            textStyle = TextStyle(color = Color.White)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -95,9 +98,10 @@ fun AuthScreen(navController: NavHostController,
         OutlinedTextField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
-            label = { Text("Confirm Password", color = Color.White) },
+            label = { Text("Confirm Password", color = Color.White, fontSize = 18.sp) },
             visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password)
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
+            textStyle = TextStyle(color = Color.White)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -107,60 +111,59 @@ fun AuthScreen(navController: NavHostController,
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             Button(onClick = {
-                viewModel.login(email, password)
-                onAuthStateChanged(AuthState.Success)
-                navController.navigate(AppScreens.Home.route)
+                if (viewModel.currentAuthMode.value == AuthMode.Login) {
+                    viewModel.login(email, password)
+                } else {
+                    viewModel.register(email, password, confirmPassword)
+                }
             }) {
-                Text("Log In")
+                Text(if (viewModel.currentAuthMode.value == AuthMode.Login) "Log In" else "Register")
             }
+        }
 
+        Spacer(modifier = Modifier.height(16.dp))
 
-            Spacer(modifier = Modifier.width(12.dp))
-
-            Button(onClick = {
-                val signInIntent = googleSignInClient.signInIntent
-                googleSignInLauncher.launch(signInIntent)
-            }) {
+        Button(onClick = {
+            val signInIntent = googleSignInClient.signInIntent
+            googleSignInLauncher.launch(signInIntent)
+        }) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Image(
+                    painter = painterResource(id = R.drawable.google_btn),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
                 Text("Log In with Google")
             }
+        }
 
-            Spacer(modifier = Modifier.width(12.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-            Button(onClick = {
-                viewModel.register(email, password, confirmPassword)
-                onAuthStateChanged(AuthState.Success)
-                navController.navigate(AppScreens.Home.route)
-            }) {
-                Text("Register")
+        when (val authState = viewModel.authState.collectAsState().value) {
+            is AuthState.Success -> {
+                // authentication success
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            when (val authState = viewModel.authState.collectAsState().value) {
-                is AuthState.Success -> {
-                    onAuthStateChanged(authState)
-                }
-
-                is AuthState.Error -> {
-                    Text(authState.errorMessage, color = Color.Red)
-                }
-
-                else -> Unit
-
+            is AuthState.Error -> {
+                Text(authState.errorMessage, color = Color.Red)
             }
+
+            else -> Unit
         }
     }
 }
-private fun createGoogleSignInClient(context: Context): GoogleSignInClient {
+
+@Composable
+fun createGoogleSignInClient(context: Context): GoogleSignInClient {
     val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-        .requestIdToken("777216942594-bio9e9s1diu3uno21m0jtglp142r6q8g.apps.googleusercontent.com") // el  Web Client ID está en firebase
+        .requestIdToken("777216942594-bio9e9s1diu3uno21m0jtglp142r6q8g.apps.googleusercontent.com") // Se hace el reemplaza con el Web Client ID de Firebase
         .requestEmail()
         .build()
 
     return GoogleSignIn.getClient(context, gso)
 }
-
-private fun handleGoogleSignInResult(
+fun handleGoogleSignInResult(
     task: Task<GoogleSignInAccount>,
     onAuthStateChanged: (AuthState) -> Unit
 ) {
@@ -181,3 +184,4 @@ private fun handleGoogleSignInResult(
         onAuthStateChanged(AuthState.Error("Google sign-in error"))
     }
 }
+

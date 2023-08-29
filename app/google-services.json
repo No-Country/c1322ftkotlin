@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "777216942594",
+    "project_id": "proyecto-apod-kotlin",
+    "storage_bucket": "proyecto-apod-kotlin.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:777216942594:android:db5a3d8022649e85c3fd1b",
+        "android_client_info": {
+          "package_name": "com.nocuntry.c1322ftkotlin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "777216942594-q6okvege5hfvgs7r3t9kj66njgtok5fp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nocuntry.c1322ftkotlin",
+            "certificate_hash": "59e37ee51817b399315c503e9294189cf8ecca6a"
+          }
+        },
+        {
+          "client_id": "777216942594-bio9e9s1diu3uno21m0jtglp142r6q8g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3-puj9PnixqgFWqaFXrsU-NHbiwU8ke4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "777216942594-0p540udg6bvoe813gjk3fbiu4gkqs96e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
