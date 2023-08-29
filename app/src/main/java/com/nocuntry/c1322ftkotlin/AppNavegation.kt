@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.nocuntry.c1322ftkotlin.Login.AuthScreen
 import com.nocuntry.c1322ftkotlin.model.NasaApiService
 import com.nocuntry.c1322ftkotlin.screen.DetailScreen
 import com.nocuntry.c1322ftkotlin.screen.Main
@@ -18,7 +19,17 @@ import com.nocuntry.c1322ftkotlin.screen.ZoomableImage
 @Composable
 fun AppNavigation(apiService: NasaApiService) {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "home") {
+    NavHost(
+        navController = navController,
+        startDestination = AppScreens.Login.route
+    ) {
+
+        composable(route = AppScreens.Login.route) {
+            AuthScreen(navController) { authState ->
+
+            }
+        }
+
 
         composable(route = AppScreens.Home.route) {
             Main(apiService, navController)
@@ -68,4 +79,3 @@ fun AppNavigation(apiService: NasaApiService) {
 
 
 }
-
