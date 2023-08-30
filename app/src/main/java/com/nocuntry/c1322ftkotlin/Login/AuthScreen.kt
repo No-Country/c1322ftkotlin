@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -15,7 +16,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -27,15 +27,26 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.GoogleAuthProvider
+import com.nocuntry.c1322ftkotlin.Login.AuthState
 import com.nocuntry.c1322ftkotlin.AppScreens
 import com.nocuntry.c1322ftkotlin.R
 
 @Composable
-fun AuthScreen(navController: NavHostController) {
+fun AuthScreen(navController: NavHostController,
+               onAuthStateChanged: (authState: AuthState) -> Unit) {
+
     val viewModel: AuthViewModel = viewModel()
+
+    val currentAuthMode by viewModel.currentAuthMode.collectAsState()
+    val authState by viewModel.authState.collectAsState() // Usar directamente authState en lugar de authStateFlow.collectAsState()
+
+    LaunchedEffect(authState) { // No necesitas authStateFlow.value.collect aquí
+        onAuthStateChanged(authState)
+    }
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -50,6 +61,7 @@ fun AuthScreen(navController: NavHostController) {
         handleGoogleSignInResult(task) { authState ->
         }
     }
+
 
 
     Column(
@@ -111,15 +123,16 @@ fun AuthScreen(navController: NavHostController) {
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             Button(onClick = {
-                if (viewModel.currentAuthMode.value == AuthMode.Login) {
+                if (currentAuthMode == AuthMode.Login) {
                     viewModel.login(email, password)
                 } else {
                     viewModel.register(email, password, confirmPassword)
                 }
             }) {
-                Text(if (viewModel.currentAuthMode.value == AuthMode.Login) "Log In" else "Register")
+                Text(if (currentAuthMode == AuthMode.Login) "Log In" else "Register")
             }
         }
+
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -140,13 +153,13 @@ fun AuthScreen(navController: NavHostController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        when (val authState = viewModel.authState.collectAsState().value) {
+        when (val currentState = authState) {
             is AuthState.Success -> {
                 // authentication success
             }
 
             is AuthState.Error -> {
-                Text(authState.errorMessage, color = Color.Red)
+                Text(currentState.errorMessage, color = Color.Red)
             }
 
             else -> Unit
@@ -165,7 +178,7 @@ fun createGoogleSignInClient(context: Context): GoogleSignInClient {
 }
 fun handleGoogleSignInResult(
     task: Task<GoogleSignInAccount>,
-    onAuthStateChanged: (AuthState) -> Unit
+    onAuthStateChanged: (authState: AuthState) -> Unit
 ) {
     try {
         val account = task.getResult(ApiException::class.java)
@@ -184,4 +197,6 @@ fun handleGoogleSignInResult(
         onAuthStateChanged(AuthState.Error("Google sign-in error"))
     }
 }
+
+
 

@@ -6,6 +6,7 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import com.nocuntry.c1322ftkotlin.Login.AuthState
 
 class AuthViewModel : ViewModel() {
     private val auth = FirebaseAuth.getInstance()
@@ -38,11 +39,16 @@ class AuthViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 auth.signInWithEmailAndPassword(email, password)
-                authState.value = AuthState.Success
+                authState.value = AuthState.Authenticated // estado autenticación exitosa
             } catch (e: Exception) {
                 authState.value = AuthState.Error(e.localizedMessage ?: "Login error")
             }
         }
+    }
+
+    fun logout() {
+        auth.signOut()
+        authState.value = AuthState.Unauthenticated // estado no autenticado, error
     }
 
     fun toggleAuthMode() {

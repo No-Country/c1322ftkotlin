@@ -60,6 +60,7 @@ dependencies {
     implementation 'androidx.compose.ui:ui-graphics'
     implementation 'androidx.compose.ui:ui-tooling-preview'
     implementation 'androidx.compose.material3:material3'
+    implementation 'com.google.firebase:firebase-crashlytics-buildtools:2.9.9'
     testImplementation 'junit:junit:4.13.2'
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
@@ -91,8 +92,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:20.0.0'
     implementation 'com.google.firebase:firebase-storage:20.0.0'
     implementation 'com.google.android.gms:play-services-auth:20.0.0'
-    implementation 'com.google.android.gms:play-services-identity:20.0.0'
-    implementation 'com.google.android.gms:play-services-auth-api-phone:20.0.0'
+    implementation 'com.google.android.gms:play-services-identity:18.0.1'
+    implementation 'com.google.android.gms:play-services-auth-api-phone:18.0.1'
 
 
     // ViewModel
@@ -101,6 +102,9 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07"
     implementation "androidx.navigation:navigation-compose:2.5.3"
     implementation "io.coil-kt:coil-compose:2.2.2"
+
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07" // Asegúrate de usar la versión correcta
+
 
 
     //Jetpackcompose

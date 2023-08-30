@@ -3,12 +3,14 @@ package com.nocuntry.c1322ftkotlin
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.nocuntry.c1322ftkotlin.Login.AuthScreen
+import com.nocuntry.c1322ftkotlin.Login.AuthState
 import com.nocuntry.c1322ftkotlin.model.NasaApiService
 import com.nocuntry.c1322ftkotlin.screen.DetailScreen
 import com.nocuntry.c1322ftkotlin.screen.Main
@@ -25,11 +27,22 @@ fun AppNavigation(apiService: NasaApiService) {
     ) {
 
         composable(route = AppScreens.Login.route) {
-            AuthScreen(navController) { authState ->
-
+            AuthScreen(navController) { authState: AuthState ->
+                when (authState) {
+                    AuthState.Authenticated -> {
+                        navController.navigate(AppScreens.Home.route)
+                    }
+                    AuthState.Unauthenticated -> {
+//                        Text("Usuario no autenticado", color = Color.Red)
+                        // Se puede o no mostrar un mensaje  aquí
+                    }is AuthState.Error -> {
+                        // Manejar el caso de autenticación con error
+//                        Text("Error de autenticación: ${authState.errorMessage}", color = Color.Red)
+                    }
+                    else -> Unit
+                }
             }
         }
-
 
         composable(route = AppScreens.Home.route) {
             Main(apiService, navController)
