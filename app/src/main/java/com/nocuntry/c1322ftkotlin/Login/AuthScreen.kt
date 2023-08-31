@@ -151,6 +151,18 @@ fun AuthScreen(navController: NavHostController,
             }
         }
 
+        Button(onClick = {
+            navController.navigate(AppScreens.Profile.route)
+        }) {
+            Text("View Profile")
+        }
+
+        Button(onClick = {
+            navController.navigate(AppScreens.EditProfile.route)
+        }) {
+            Text("Edit Profile")
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
 
         when (val currentState = authState) {

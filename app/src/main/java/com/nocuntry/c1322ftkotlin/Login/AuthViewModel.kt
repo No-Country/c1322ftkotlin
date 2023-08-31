@@ -1,16 +1,27 @@
 package com.nocuntry.c1322ftkotlin.Login
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
+import com.nocuntry.c1322ftkotlin.AppScreens
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import com.nocuntry.c1322ftkotlin.Login.AuthState
+import com.nocuntry.c1322ftkotlin.Profile.ProfileEvent
+import com.nocuntry.c1322ftkotlin.Profile.UserProfile
 
 class AuthViewModel : ViewModel() {
     private val auth = FirebaseAuth.getInstance()
     val currentUser = auth.currentUser
+
+    private val _navigateToProfile = MutableStateFlow(false)
+    val navigateToProfile: StateFlow<Boolean> = _navigateToProfile
+
+    private val _navigateToEditProfile = MutableStateFlow(false)
+    val navigateToEditProfile: StateFlow<Boolean> = _navigateToEditProfile
 
     private val _currentAuthMode = MutableStateFlow(AuthMode.Login)
     val currentAuthMode: StateFlow<AuthMode> = _currentAuthMode
@@ -18,6 +29,9 @@ class AuthViewModel : ViewModel() {
 
     val authState = MutableStateFlow<AuthState>(AuthState.None)
     var authMode: AuthMode = AuthMode.Login // Agregamos una variable para rastrear el modo de autenticación
+
+    val currentScreen: MutableState<AppScreens> = mutableStateOf(AppScreens.Login)
+    val profileEvent: MutableState<ProfileEvent?> = mutableStateOf(null)
 
     fun register(email: String, password: String, confirmPassword: String) {
         if (password != confirmPassword) {
@@ -58,4 +72,18 @@ class AuthViewModel : ViewModel() {
             AuthMode.Login
         }
     }
+    fun navigateToProfile() {
+        _navigateToProfile.value = true
+    }
+
+    fun navigateToEditProfile() {
+        _navigateToEditProfile.value = true
+    }
+
+    fun navigationHandled() {
+        _navigateToProfile.value = false
+        _navigateToEditProfile.value = false
+    }
 }
+
+

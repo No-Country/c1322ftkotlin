@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -11,6 +12,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.nocuntry.c1322ftkotlin.Login.AuthScreen
 import com.nocuntry.c1322ftkotlin.Login.AuthState
+import com.nocuntry.c1322ftkotlin.Profile.EditProfileScreen
+import com.nocuntry.c1322ftkotlin.Profile.ProfileScreen
 import com.nocuntry.c1322ftkotlin.model.NasaApiService
 import com.nocuntry.c1322ftkotlin.screen.DetailScreen
 import com.nocuntry.c1322ftkotlin.screen.Main
@@ -32,16 +35,26 @@ fun AppNavigation(apiService: NasaApiService) {
                     AuthState.Authenticated -> {
                         navController.navigate(AppScreens.Home.route)
                     }
+
                     AuthState.Unauthenticated -> {
 //                        Text("Usuario no autenticado", color = Color.Red)
                         // Se puede o no mostrar un mensaje  aquí
-                    }is AuthState.Error -> {
+                    }
+
+                    is AuthState.Error -> {
                         // Manejar el caso de autenticación con error
 //                        Text("Error de autenticación: ${authState.errorMessage}", color = Color.Red)
                     }
+
                     else -> Unit
                 }
             }
+        }
+        composable(route = AppScreens.Profile.route) {
+            ProfileScreen(navController)
+        }
+        composable(route = AppScreens.EditProfile.route) {
+            EditProfileScreen(navController, viewModel = viewModel())
         }
 
         composable(route = AppScreens.Home.route) {
@@ -89,6 +102,5 @@ fun AppNavigation(apiService: NasaApiService) {
             )
         }
     }
-
-
 }
+
