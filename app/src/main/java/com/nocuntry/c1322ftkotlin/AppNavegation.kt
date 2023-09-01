@@ -12,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.nocuntry.c1322ftkotlin.Login.AuthScreen
 import com.nocuntry.c1322ftkotlin.Login.AuthState
+import com.nocuntry.c1322ftkotlin.Login.RegisterScreen
 import com.nocuntry.c1322ftkotlin.Profile.EditProfileScreen
 import com.nocuntry.c1322ftkotlin.Profile.ProfileScreen
 import com.nocuntry.c1322ftkotlin.model.NasaApiService
@@ -55,6 +56,10 @@ fun AppNavigation(apiService: NasaApiService) {
         }
         composable(route = AppScreens.EditProfile.route) {
             EditProfileScreen(navController, viewModel = viewModel())
+        }
+
+        composable(route = AppScreens.Register.route) {
+            RegisterScreen(navController, viewModel= viewModel())
         }
 
         composable(route = AppScreens.Home.route) {

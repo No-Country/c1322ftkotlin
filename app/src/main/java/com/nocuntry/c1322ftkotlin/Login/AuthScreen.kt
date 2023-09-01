@@ -48,10 +48,6 @@ fun AuthScreen(navController: NavHostController,
         onAuthStateChanged(authState)
     }
 
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
-
     val context = LocalContext.current
     val googleSignInClient = createGoogleSignInClient(context)
     val googleSignInLauncher = rememberLauncherForActivityResult(
@@ -63,12 +59,11 @@ fun AuthScreen(navController: NavHostController,
     }
 
 
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .background(Color(0xFF03122C)), // Color de fondo pantalla login
+            .background(Color(0xFF0A0A0A)), // Color de fondo pantalla login
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -78,63 +73,27 @@ fun AuthScreen(navController: NavHostController,
             modifier = Modifier.size(100.dp)
         )
         Text(
-            text = "Welcome to the Astronomy App", //tambien se puede modificar el saludo de incio de la app
-            fontSize = 18.sp,
+            text = "Welcome to the Orion", //tambien se puede modificar el saludo de incio de la app
+            fontSize = 22.sp,
             color = Color.White,  // Aplicar el color de texto de bienvenida al color que se quiera
             fontStyle = FontStyle.Italic
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email", color = Color.White) },
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
-            textStyle = TextStyle(color = Color.White)
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password", color = Color.White) },
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
-            textStyle = TextStyle(color = Color.White)
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = confirmPassword,
-            onValueChange = { confirmPassword = it },
-            label = { Text("Confirm Password", color = Color.White, fontSize = 18.sp) },
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
-            textStyle = TextStyle(color = Color.White)
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(18.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             Button(onClick = {
-                if (currentAuthMode == AuthMode.Login) {
-                    viewModel.login(email, password)
-                } else {
-                    viewModel.register(email, password, confirmPassword)
-                }
+                navController.navigate(AppScreens.Register.route)
             }) {
-                Text(if (currentAuthMode == AuthMode.Login) "Log In" else "Register")
+                Text("Register")
             }
         }
 
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(18.dp))
 
         Button(onClick = {
             val signInIntent = googleSignInClient.signInIntent
@@ -149,18 +108,6 @@ fun AuthScreen(navController: NavHostController,
                 Spacer(modifier = Modifier.width(8.dp))
                 Text("Log In with Google")
             }
-        }
-
-        Button(onClick = {
-            navController.navigate(AppScreens.Profile.route)
-        }) {
-            Text("View Profile")
-        }
-
-        Button(onClick = {
-            navController.navigate(AppScreens.EditProfile.route)
-        }) {
-            Text("Edit Profile")
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -209,6 +156,5 @@ fun handleGoogleSignInResult(
         onAuthStateChanged(AuthState.Error("Google sign-in error"))
     }
 }
-
 
 

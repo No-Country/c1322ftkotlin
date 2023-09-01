@@ -26,14 +26,16 @@ class AuthViewModel : ViewModel() {
     private val _currentAuthMode = MutableStateFlow(AuthMode.Login)
     val currentAuthMode: StateFlow<AuthMode> = _currentAuthMode
 
-
     val authState = MutableStateFlow<AuthState>(AuthState.None)
     var authMode: AuthMode = AuthMode.Login // Agregamos una variable para rastrear el modo de autenticación
 
     val currentScreen: MutableState<AppScreens> = mutableStateOf(AppScreens.Login)
     val profileEvent: MutableState<ProfileEvent?> = mutableStateOf(null)
 
-    fun register(email: String, password: String, confirmPassword: String) {
+    private val _userProfile = MutableStateFlow<UserProfile?>(null)
+    val userProfile: StateFlow<UserProfile?> = _userProfile
+
+    fun register(firstName: String, lastName: String, email: String, password: String, confirmPassword: String) {
         if (password != confirmPassword) {
             authState.value = AuthState.Error("Passwords do not match")
             return
@@ -42,6 +44,8 @@ class AuthViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 auth.createUserWithEmailAndPassword(email, password)
+                // Crear aqui el UserProfile y guárdarlo en la propiedad _userProfile
+                _userProfile.value = UserProfile(firstName, lastName, email, "")
                 authState.value = AuthState.Success
             } catch (e: Exception) {
                 authState.value = AuthState.Error(e.localizedMessage ?: "Registration error")

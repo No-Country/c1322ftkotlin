@@ -36,7 +36,7 @@ fun EditProfileScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .background(Color(0xFF03122C)),
+            .background(Color(0xFF0A0A0A)),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

@@ -14,7 +14,7 @@ import kotlinx.coroutines.tasks.await
 
 class GoogleAuthUiClient(
     private val context: Context,
-    private val oneTapClient: SignInClient,
+    private val oneTapClient: SignInClient, // Utilizando SignInClient correcto
     private val onAuthStateChanged: (AuthState) -> Unit
 ) {
     private val auth = FirebaseAuth.getInstance()
@@ -32,21 +32,29 @@ class GoogleAuthUiClient(
         return result?.pendingIntent?.intentSender
     }
 
-    suspend fun signInWithIntent(intent: Intent) {
+    suspend fun signInWithIntent(intent: Intent): SignInResult {
         val credential = oneTapClient.getSignInCredentialFromIntent(intent)
         val googleIdToken = credential.googleIdToken
         val googleCredentials = GoogleAuthProvider.getCredential(googleIdToken, null)
         try {
             val user = auth.signInWithCredential(googleCredentials).await().user
-            if (user != null) {
-                onAuthStateChanged(AuthState.Success)
-            } else {
-                // inicio de sesión fallido
-            }
-        } catch (e: Exception) {
+            return SignInResult(
+                data = user?.run {
+                    UserData(
+                        userId = uid,
+                        username = displayName,
+                        profilePictureUrl = photoUrl?.toString()
+                    )
+                },
+                errorMessage = null
+            )
+        } catch(e: Exception) {
             e.printStackTrace()
-            if (e is CancellationException) throw e
-            onAuthStateChanged(AuthState.Error("Google sign-in failed"))
+            if(e is CancellationException) throw e
+            return SignInResult(
+                data = null,
+                errorMessage = e.message
+            )
         }
     }
 
