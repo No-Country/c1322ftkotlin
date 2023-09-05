@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.nocuntry.c1322ftkotlin.model.NasaApiService
+import com.nocuntry.c1322ftkotlin.screen.ChatScreen
 import com.nocuntry.c1322ftkotlin.screen.DetailScreen
 import com.nocuntry.c1322ftkotlin.screen.Main
 import com.nocuntry.c1322ftkotlin.screen.ZoomableImage
@@ -65,6 +66,14 @@ fun AppNavigation(apiService: NasaApiService) {
                 navController,
                 it.arguments?.getString("image"),
                 it.arguments?.getString("formattedDate")
+            )
+        }
+
+        composable(route = AppScreens.ChatScreen.route + "/{explanation}") {
+            ChatScreen(
+                navController,
+                it.arguments?.getString("explanation"),
+                iaviewModel
             )
         }
     }

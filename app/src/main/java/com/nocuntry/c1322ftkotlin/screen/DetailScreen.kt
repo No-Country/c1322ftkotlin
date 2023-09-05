@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -35,7 +36,6 @@ import com.nocuntry.c1322ftkotlin.R
 import kotlinx.coroutines.DelicateCoroutinesApi
 
 
-//@Preview(showSystemUi = true)
 @OptIn(ExperimentalCoilApi::class, ExperimentalMaterial3Api::class, DelicateCoroutinesApi::class)
 @Composable
 fun DetailScreen(
@@ -155,6 +155,23 @@ fun DetailScreen(
                             .padding(top = 2.dp, bottom = 2.dp)
                             .padding(horizontal = 4.dp)
                     )
+                }
+            }
+
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+            ) {
+
+                Button(onClick = { navController.navigate(
+                    route = AppScreens.ChatScreen.route +
+                            "/$explanation"
+                ) }
+                ) {
+                    Text(text = "Aprende mas con HAL", color = Color.Black)
+
                 }
             }
         }
