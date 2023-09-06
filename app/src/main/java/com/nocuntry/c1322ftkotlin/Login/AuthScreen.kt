@@ -151,7 +151,7 @@ fun AuthScreen(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Image(
-                painter = painterResource(id = R.drawable.google_icon),
+                painter = painterResource(id = R.drawable.google_btn),
                 contentDescription = null,
                 modifier = Modifier
                     .size(30.dp)

@@ -42,9 +42,10 @@ fun AppNavigation(apiService: NasaApiService) {
     ) {
 
         composable(route = AppScreens.Home.route) {
-            Main(apiService,
+            Main(
+                apiService,
                 navController,
-//                iaviewModel
+                iaviewModel
             )
         }
 

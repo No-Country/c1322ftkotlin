@@ -34,6 +34,7 @@ import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.nocuntry.c1322ftkotlin.AppScreens
+import com.nocuntry.c1322ftkotlin.IAViewModel
 import com.nocuntry.c1322ftkotlin.model.ApodList
 import com.nocuntry.c1322ftkotlin.model.ApodResponse
 import com.nocuntry.c1322ftkotlin.model.NasaApiService
@@ -51,10 +52,12 @@ fun transformText(explanation: String): String {
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalCoilApi::class)
 @Composable
-fun Main(apiService: NasaApiService, navController: NavController) {
+fun Main(apiService: NasaApiService, navController: NavController, viewModel: IAViewModel) {
 
 
     var apodListState by remember { mutableStateOf(emptyList<ApodResponse>()) }
+
+    viewModel.translateText = ""
 
     var isLoading by remember {
         mutableStateOf(true)
