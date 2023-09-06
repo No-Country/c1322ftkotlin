@@ -9,7 +9,7 @@ plugins {
 
 android {
     namespace 'com.nocuntry.c1322ftkotlin'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.nocuntry.c1322ftkotlin"
@@ -106,15 +106,21 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07"
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0-rc01"
 
-
+    implementation "androidx.compose.ui:ui:1.5.0"
+    implementation "androidx.compose.material:material:1.5.0"
 
     //Jetpackcompose
     implementation "com.google.android.material:compose-theme-adapter:1.1.16"
     implementation "com.google.accompanist:accompanist-appcompat-theme:0.28.0"
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.0")
     implementation "androidx.compose.ui:ui:$compose_version"
-    implementation "androidx.compose.ui:ui-tooling:$compose_version"
+
+    implementation("androidx.compose.ui:ui:1.3.3")
+    implementation("androidx.compose.material:material:1.5.0")
+
+    implementation "androidx.compose.material3:material3:$compose_version"
     implementation "androidx.compose.foundation:foundation:$compose_version"
+    implementation "androidx.compose.ui:ui-tooling:$compose_version"
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
     implementation "androidx.compose.material:material:$compose_version"
     implementation "androidx.compose.material:material-icons-core:$compose_version"
@@ -155,5 +161,11 @@ dependencies {
     // Accompanist
     implementation "com.google.accompanist:accompanist-navigation-animation:0.16.0"
 
+
+    //openai
+    implementation 'com.aallam.openai:openai-client:3.3.0'
+
+    implementation 'io.ktor:ktor-client-android:2.3.2'
+    implementation 'io.ktor:ktor-client-okhttp:2.3.2'
 
 }

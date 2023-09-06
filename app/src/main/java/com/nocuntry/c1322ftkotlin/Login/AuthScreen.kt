@@ -1,6 +1,7 @@
 package com.nocuntry.c1322ftkotlin.Login
 
 import android.content.Context
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,10 +25,15 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.flow.StateFlow
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
@@ -34,27 +41,40 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.nocuntry.c1322ftkotlin.Login.AuthState
 import com.nocuntry.c1322ftkotlin.AppScreens
 import com.nocuntry.c1322ftkotlin.R
+import com.nocuntry.c1322ftkotlin.ui.theme.MyButtonColor
 
 @Composable
-fun AuthScreen(navController: NavHostController,
-               onAuthStateChanged: (authState: AuthState) -> Unit) {
+fun AuthScreen(
+    navController: NavHostController,
+    onAuthStateChanged: (authState: AuthState) -> Unit
+) {
 
     val viewModel: AuthViewModel = viewModel()
 
-    val currentAuthMode by viewModel.currentAuthMode.collectAsState()
-    val authState by viewModel.authState.collectAsState() // Usar directamente authState en lugar de authStateFlow.collectAsState()
+    val currentAuthMode by viewModel.currentAuthMode
+    val authState by viewModel.authState
+
+    val token = "777216942594-bio9e9s1diu3uno21m0jtglp142r6q8g.apps.googleusercontent.com"
+    val context = LocalContext.current
+
+    var showWelcomeMessage by remember { mutableStateOf(false) }
+
 
     LaunchedEffect(authState) { // No necesitas authStateFlow.value.collect aquí
         onAuthStateChanged(authState)
     }
-
-    val context = LocalContext.current
-    val googleSignInClient = createGoogleSignInClient(context)
     val googleSignInLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
         val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-        handleGoogleSignInResult(task) { authState ->
+        try {
+            val account = task.getResult(ApiException::class.java)
+            val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+            viewModel.signInWithGoogle(credential) {
+                navController.navigate(AppScreens.Home.route)
+            }
+        } catch (ex: Exception) {
+            Log.d("Orion App", "GoogleSignIn Falló")
         }
     }
 
@@ -67,13 +87,11 @@ fun AuthScreen(navController: NavHostController,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.logo),
-            contentDescription = null,
-            modifier = Modifier.size(100.dp)
-        )
+
+        Spacer(modifier = Modifier.height(18.dp))
+
         Text(
-            text = "Welcome to the Orion", //tambien se puede modificar el saludo de incio de la app
+            text = "Welcome to Orion", //tambien se puede modificar el saludo de incio de la app
             fontSize = 22.sp,
             color = Color.White,  // Aplicar el color de texto de bienvenida al color que se quiera
             fontStyle = FontStyle.Italic
@@ -81,80 +99,102 @@ fun AuthScreen(navController: NavHostController,
 
         Spacer(modifier = Modifier.height(18.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            Button(onClick = {
+        Image(
+            painter = painterResource(id = R.drawable.logo),
+            contentDescription = null,
+            modifier = Modifier.size(100.dp)
+        )
+
+        Spacer(modifier = Modifier.height(25.dp))
+
+        // Botón para crear una cuenta
+        Button(
+            onClick = {
                 navController.navigate(AppScreens.Register.route)
-            }) {
-                Text("Register")
-            }
-        }
-
-
-        Spacer(modifier = Modifier.height(18.dp))
-
-        Button(onClick = {
-            val signInIntent = googleSignInClient.signInIntent
-            googleSignInLauncher.launch(signInIntent)
-        }) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    painter = painterResource(id = R.drawable.google_btn),
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp)
+            },
+            modifier = Modifier
+                .wrapContentWidth(align = Alignment.CenterHorizontally)
+                .padding(8.dp),
+            colors = ButtonDefaults.buttonColors(MyButtonColor),
+        ) {
+            Text(
+                "Create An Account",
+                style = TextStyle(
+                    fontWeight = FontWeight.Bold, // Texto en negrita
+                    fontSize = 18.sp, // Tamaño del texto
+                    color = Color.White // Color de texto blanco
                 )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Log In with Google")
-            }
+            )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(25.dp))
 
-        when (val currentState = authState) {
-            is AuthState.Success -> {
-                // authentication success
-            }
 
-            is AuthState.Error -> {
-                Text(currentState.errorMessage, color = Color.Red)
-            }
+        //Boton inicio de sesion con Google
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp)
+                .clickable {
+                    val opciones = GoogleSignInOptions
+                        .Builder(
+                            GoogleSignInOptions.DEFAULT_SIGN_IN
+                        )
+                        .requestIdToken(token)
+                        .requestEmail()
+                        .build()
 
-            else -> Unit
+                    val googleSignInCliente = GoogleSignIn.getClient(context, opciones)
+                    googleSignInLauncher.launch(googleSignInCliente.signInIntent)
+                },
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.google_icon),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(30.dp)
+                    .padding(end = 10.dp), // Espacio entre la imagen y el texto
+            )
+            Text(
+                "Login with Google",
+                style = TextStyle(
+                    fontWeight = FontWeight.Bold, // Texto en negrita
+                    fontSize = 18.sp, // Tamaño del texto
+                    color = Color.White // Color de texto blanco
+                )
+            )
         }
     }
-}
 
-@Composable
-fun createGoogleSignInClient(context: Context): GoogleSignInClient {
-    val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-        .requestIdToken("777216942594-bio9e9s1diu3uno21m0jtglp142r6q8g.apps.googleusercontent.com") // Se hace el reemplaza con el Web Client ID de Firebase
-        .requestEmail()
-        .build()
-
-    return GoogleSignIn.getClient(context, gso)
-}
-fun handleGoogleSignInResult(
-    task: Task<GoogleSignInAccount>,
-    onAuthStateChanged: (authState: AuthState) -> Unit
-) {
-    try {
-        val account = task.getResult(ApiException::class.java)
-        if (account != null) {
-            val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-            FirebaseAuth.getInstance().signInWithCredential(credential)
-                .addOnCompleteListener { authTask ->
-                    if (authTask.isSuccessful) {
-                        onAuthStateChanged(AuthState.Success)
-                    } else {
-                        onAuthStateChanged(AuthState.Error("Google sign-in failed"))
+    if (showWelcomeMessage) {
+        AlertDialog(
+            onDismissRequest = {
+                showWelcomeMessage = false
+            },
+            title = {
+                Text(text = "¡Bienvenido!")
+            },
+            text = {
+                Text(text = "Has iniciado sesión con éxito.")
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showWelcomeMessage = false
                     }
+                ) {
+                    Text(text = "Aceptar")
                 }
-        }
-    } catch (e: ApiException) {
-        onAuthStateChanged(AuthState.Error("Google sign-in error"))
+            }
+        )
     }
 }
+
+
+
+
+
 
 

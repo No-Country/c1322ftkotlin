@@ -68,3 +68,10 @@ fun C1322ftkotlinTheme(
         content = content
     )
 }
+@Composable
+fun MyScreen() {
+    MaterialTheme {
+        val colorScheme = MaterialTheme.colorScheme
+    }
+}
+

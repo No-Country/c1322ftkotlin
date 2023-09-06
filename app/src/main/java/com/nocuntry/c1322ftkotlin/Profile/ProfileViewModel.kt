@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 class ProfileViewModel : ViewModel() {
 
     private val _userInfo = MutableStateFlow<UserInfo>(
-        UserInfo(name = "Jualian Alvarez", email = "juliane@gmail.com")
+        UserInfo(name = "John Doe", email = "johndoe@example.com")
     )
 
     val userInfo: StateFlow<UserInfo> = _userInfo

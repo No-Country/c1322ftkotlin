@@ -1,153 +1,244 @@
-package com.nocuntry.c1322ftkotlin.Login
-
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.navigation.NavHostController
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.nocuntry.c1322ftkotlin.AppScreens
+import com.nocuntry.c1322ftkotlin.Login.AuthViewModel
 import com.nocuntry.c1322ftkotlin.R
+import com.nocuntry.c1322ftkotlin.ui.theme.MyButtonColor
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(navController: NavHostController, viewModel: AuthViewModel) {
-
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
 
+    var isPasswordVisible by remember { mutableStateOf(false) }
+    var showPassword by remember { mutableStateOf(false) }
+
+    var showSuccessDialog by remember { mutableStateOf(false) }
+
+    var showErrorDialog by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .background(Color(0xFF0A0A0A)), // Color de fondo pantalla login
+            .background(Color(0xFF0A0A0A)),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(20.dp)) // Espacio margen de arriba del logo
+        Spacer(modifier = Modifier.height(20.dp))
 
         Image(
             painter = painterResource(id = R.drawable.logo),
             contentDescription = null,
             modifier = Modifier.size(100.dp)
         )
-        androidx.compose.material.Text(
-            text = "Create Account", //tambien se puede modificar el saludo de incio de la app
-            fontSize = 20.sp,
-            color = Color.White,  // Aplicar el color de texto de bienvenida al color que se quiera
+        Text(
+            text = "Create Account",
+            fontSize = 25.sp,
+            color = Color.White,
             fontStyle = FontStyle.Italic
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-
-        OutlinedTextField(
-            value = firstName,
-            onValueChange = { firstName = it },
-            label = { Text("First Name", color = Color.White, fontSize = 16.sp) },
-            textStyle = TextStyle(color = Color.White, fontSize = 16.sp)
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = lastName,
-            onValueChange = { lastName = it },
-            label = { Text("Last Name", color = Color.White, fontSize = 16.sp) },
-            textStyle = TextStyle(color = Color.White, fontSize = 16.sp)
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email", color = Color.White, fontSize = 16.sp) },
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
-            textStyle = TextStyle(color = Color.White, fontSize = 16.sp)
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password", color = Color.White, fontSize = 16.sp) },
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done
-            ),
-            textStyle = TextStyle(color = Color.White, fontSize = 16.sp)
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-
-        /*OutlinedTextField(
-            value = confirmPassword,
-            onValueChange = { confirmPassword = it },
-            label = { Text("Confirm Password", color = Color.White, fontSize = 16.sp) },
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done
-            ),
-            textStyle = TextStyle(color = Color.White, fontSize = 16.sp)
-        )
-        Spacer(modifier = Modifier.height(8.dp))*/
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            TextField(
+                value = firstName,
+                onValueChange = { firstName = it },
+                textStyle = TextStyle(color = Color.Black, fontSize = 16.sp),
+                label = { Text("First Name", color = Color.DarkGray, fontSize = 16.sp) }
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            TextField(
+                value = lastName,
+                onValueChange = { lastName = it },
+                textStyle = TextStyle(color = Color.Black, fontSize = 16.sp),
+                label = { Text("Last Name", color = Color.DarkGray, fontSize = 16.sp) }
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
+          TextField(
+                value = email,
+                onValueChange = { email = it },
+                textStyle = TextStyle(color = Color.Black, fontSize = 16.sp),
+                label = { Text("Email", color = Color.DarkGray, fontSize = 16.sp) }
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            TextField(
+                value = password,
+                onValueChange = { password = it },
+                textStyle = TextStyle(color = Color.Black, fontSize = 16.sp),
+                label = { Text("Password", color = Color.DarkGray, fontSize = 16.sp) },
+                visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
+                trailingIcon = {
+                    val eyeIcon = if (showPassword) R.drawable.ic_eye_closed else R.drawable.ic_eye
+                    Image(
+                        painter = painterResource(id = eyeIcon),
+                        contentDescription = if (showPassword) "Hide Password" else "Show Password",
+                        modifier = Modifier
+                            .clickable {
+                            showPassword = !showPassword
+                        }
+                    )
+                }
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            TextField(
+                value = confirmPassword,
+                onValueChange = { confirmPassword = it },
+                textStyle = TextStyle(color = Color.Black, fontSize = 16.sp),
+                label = { Text("Password", color = Color.DarkGray, fontSize = 16.sp) },
+                visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
+                trailingIcon = {
+                    val eyeIcon = if (showPassword) R.drawable.ic_eye_closed else R.drawable.ic_eye
+                    Image(
+                        painter = painterResource(id = eyeIcon),
+                        contentDescription = if (showPassword) "Hide Password" else "Show Password",
+                        modifier = Modifier
+                            .clickable {
+                                showPassword = !showPassword
+                            }
+                    )
+                }
+            )
+            Spacer(modifier = Modifier.height(16.dp))
 
             Button(
                 onClick = {
-                    viewModel.register(firstName, lastName, email, password, confirmPassword)
-                    navController.navigate(AppScreens.Home.route)
+                    if (firstName.isNotEmpty() && lastName.isNotEmpty() && email.isNotEmpty() &&
+                        password.isNotEmpty() && confirmPassword.isNotEmpty()) {
+                        if (password == confirmPassword) {
+                            viewModel.register(firstName, lastName, email, password, confirmPassword)
+                            showSuccessDialog = true
+                            navController.navigate(AppScreens.Home.route) // Redirige al usuario a la pantalla de inicio de la aplicacion
+                        } else {
+                            showErrorDialog = true
+                        }
+                    } else {
+                        showErrorDialog = true
+                    }
                 },
                 modifier = Modifier
-                    .padding(16.dp)
-                    .wrapContentWidth(),
-                colors = ButtonDefaults.buttonColors(),
+                    .fillMaxWidth()
+                    .align(Alignment.CenterHorizontally),
+                colors = ButtonDefaults.buttonColors(MyButtonColor),
                 content = {
                     Text(
-                        text = "Done",
-                        style = MaterialTheme.typography.button.copy(color = MaterialTheme.colors.onPrimary)
+                        text = "Register",
+                        style = TextStyle(
+                            fontSize = 18.sp, // Tamaño del texto
+                            color = Color.White // Color de texto blanco
+                        )
+                    )
+                }
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = {
+                    navController.navigate(AppScreens.Login.route)
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.CenterHorizontally),
+                colors = ButtonDefaults.buttonColors(MyButtonColor),
+                content = {
+                    Text(
+                        text = "Cancel",
+                        style = TextStyle(
+                            fontSize = 18.sp, // Tamaño del texto
+                            color = Color.White // Color de texto blanco
+                        )
                     )
                 }
             )
         }
     }
-}
-            /*Button(onClick = {
-                navController.navigate(AppScreens.Profile.route)
-            }) {
-                androidx.compose.material.Text("View Profile")
+
+    if (showSuccessDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showSuccessDialog = false
+            },
+            title = {
+                Text(text = "Registro Exitoso")
+            },
+            text = {
+                Text(text = "Tu registro ha sido exitoso.")
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showSuccessDialog = false
+                    }
+                ) {
+                    Text(text = "Aceptar")
+                }
             }
+        )
+    }
 
-            Button(onClick = {
-                navController.navigate(AppScreens.EditProfile.route)
-            }) {
-                androidx.compose.material.Text("Edit Profile")
-            }*/
-
+    if (showErrorDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showErrorDialog = false
+            },
+            title = {
+                Text(text = "Error en el registro")
+            },
+            text = {
+                Text(text = "Por favor, completa todos los campos del formulario de registro y asegúrate de que las contraseñas coincidan.")
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showErrorDialog = false
+                    }
+                ) {
+                    Text(text = "Aceptar")
+                }
+            }
+        )
+    }
+}

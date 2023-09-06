@@ -1,8 +1,18 @@
 package com.nocuntry.c1322ftkotlin
 
+import ProfileScreen
+import RegisterScreen
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -12,10 +22,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.nocuntry.c1322ftkotlin.Login.AuthScreen
 import com.nocuntry.c1322ftkotlin.Login.AuthState
-import com.nocuntry.c1322ftkotlin.Login.RegisterScreen
 import com.nocuntry.c1322ftkotlin.Profile.EditProfileScreen
-import com.nocuntry.c1322ftkotlin.Profile.ProfileScreen
 import com.nocuntry.c1322ftkotlin.model.NasaApiService
+import com.nocuntry.c1322ftkotlin.screen.ChatScreen
 import com.nocuntry.c1322ftkotlin.screen.DetailScreen
 import com.nocuntry.c1322ftkotlin.screen.Main
 import com.nocuntry.c1322ftkotlin.screen.ZoomableImage
@@ -25,10 +34,19 @@ import com.nocuntry.c1322ftkotlin.screen.ZoomableImage
 @Composable
 fun AppNavigation(apiService: NasaApiService) {
     val navController = rememberNavController()
+    val iaviewModel = viewModel<IAViewModel>()
+
     NavHost(
         navController = navController,
         startDestination = AppScreens.Login.route
     ) {
+
+        composable(route = AppScreens.Home.route) {
+            Main(apiService,
+                navController,
+//                iaviewModel
+            )
+        }
 
         composable(route = AppScreens.Login.route) {
             AuthScreen(navController) { authState: AuthState ->
@@ -54,17 +72,11 @@ fun AppNavigation(apiService: NasaApiService) {
         composable(route = AppScreens.Profile.route) {
             ProfileScreen(navController)
         }
-        composable(route = AppScreens.EditProfile.route) {
-            EditProfileScreen(navController, viewModel = viewModel())
-        }
 
         composable(route = AppScreens.Register.route) {
-            RegisterScreen(navController, viewModel= viewModel())
+            RegisterScreen(navController, viewModel = viewModel())
         }
 
-        composable(route = AppScreens.Home.route) {
-            Main(apiService, navController)
-        }
 
         composable(route = AppScreens.Detail.route + "/{image}/{formattedDate}/{title}/{explanation}/{date}",
             arguments = listOf(navArgument(name = "image") {
@@ -82,15 +94,19 @@ fun AppNavigation(apiService: NasaApiService) {
                 navArgument(name = "date") {
                     type = NavType.StringType
                 }
-            )) {
+            )
+        )
+        {
             DetailScreen(
                 navController,
                 it.arguments?.getString("image"),
                 it.arguments?.getString("formattedDate"),
                 it.arguments?.getString("title"),
                 it.arguments?.getString("explanation"),
-                it.arguments?.getString("date")
+                it.arguments?.getString("date"),
+                iaviewModel
             )
+
         }
         composable(route = AppScreens.ZoomImage.route + "/{image}/{formattedDate}",
             arguments = listOf(navArgument(name = "image") {
@@ -104,6 +120,13 @@ fun AppNavigation(apiService: NasaApiService) {
                 navController,
                 it.arguments?.getString("image"),
                 it.arguments?.getString("formattedDate")
+            )
+        }
+        composable(route = AppScreens.ChatScreen.route + "/{explanation}") {
+            ChatScreen(
+                navController,
+                it.arguments?.getString("explanation"),
+                iaviewModel
             )
         }
     }
