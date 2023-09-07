@@ -22,6 +22,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -66,86 +67,106 @@ fun ChatScreen(
 
     var newQuestion = ""
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    Column {
 
-        items(chatList) { chatItem ->
-            ChatCard(chatItem.first, chatItem.second)
-        }
+        TopAppBar(
+            navigationIcon = {
+                IconButton(onClick = { /*TODO*/ }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.chatgptlogo),
+                        contentDescription = "Chat GPT logo",
+                        tint = Color.Unspecified
+                    )
+                }
+            },
+            title = {
+                Text(
+                    "HAL"
+                )
+            },
+            modifier = Modifier.background(Color.Gray)
+        )
 
-        item {
-            if (isReady) {
-                chatList.add(Pair(newQuestion, Color.Gray))
-                isReady = false
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            items(chatList) { chatItem ->
+                ChatCard(chatItem.first, chatItem.second)
             }
 
-            AnimationChat(isLoading = viewModel.loading, translateComplete = {
-                if (viewModel.Info.isNotEmpty()) {
-                    val newAnswer = viewModel.Info
-
-                    if (!previousQuestionsAndAnswers.contains(Pair(newQuestion, newAnswer))) {
-
-                        chatList.add(Pair(newAnswer, Color.Black))
-
-                        previousQuestionsAndAnswers.add(Pair(newQuestion, newAnswer))
-                    }
+            item {
+                if (isReady) {
+                    chatList.add(Pair(newQuestion, Color.Gray))
+                    isReady = false
                 }
-            })
-        }
 
-        item {
+                AnimationChat(isLoading = viewModel.loading, translateComplete = {
+                    if (viewModel.Info.isNotEmpty()) {
+                        val newAnswer = viewModel.Info
 
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Spacer(modifier = Modifier.weight(1f))
+                        if (!previousQuestionsAndAnswers.contains(Pair(newQuestion, newAnswer))) {
 
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.BottomEnd
-                ) {
+                            chatList.add(Pair(newAnswer, Color.Black))
 
-                    TextField(
-                        value = question.value,
-                        onValueChange = { question.value = it },
-                        label = { Text("Escribe aqui") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(Color(0xFF000000)),
-                        colors = TextFieldDefaults.textFieldColors(
-                            textColor = Color(0xFF070707),
-                            focusedIndicatorColor = Color(0xFF000000),
-                            unfocusedIndicatorColor = Color(0xFF000000)
-                        )
-                    )
-
-                    IconButton(onClick = {
-
-                        newQuestion = question.value
-                        if (newQuestion.isNotBlank()) {
-                            viewModel.MoreInfo(explanation.toString(), newQuestion)
-                            newQuestion = question.value
-                            isReady = true
-                            question.value = ""
-                            focusManager.clearFocus()
+                            previousQuestionsAndAnswers.add(Pair(newQuestion, newAnswer))
                         }
+                    }
+                })
+            }
 
-                    }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.baseline_send_24),
-                            contentDescription = "send button",
-                            tint = Color.Black
+            item {
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.BottomEnd
+                    ) {
+
+                        TextField(
+                            value = question.value,
+                            onValueChange = { question.value = it },
+                            label = { Text("Escribe aqui") },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(Color(0xFF000000)),
+                            colors = TextFieldDefaults.textFieldColors(
+                                textColor = Color(0xFF070707),
+                                focusedIndicatorColor = Color(0xFF000000),
+                                unfocusedIndicatorColor = Color(0xFF000000)
+                            )
                         )
+
+                        IconButton(onClick = {
+
+                            newQuestion = question.value
+                            if (newQuestion.isNotBlank()) {
+                                viewModel.MoreInfo(explanation.toString(), newQuestion)
+                                newQuestion = question.value
+                                isReady = true
+                                question.value = ""
+                                focusManager.clearFocus()
+                            }
+
+                        }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.baseline_send_24),
+                                contentDescription = "send button",
+                                tint = Color.Black
+                            )
+                        }
                     }
                 }
             }
         }
     }
 }
-
 

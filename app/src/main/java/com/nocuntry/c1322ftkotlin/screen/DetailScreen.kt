@@ -20,6 +20,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -162,22 +163,26 @@ fun DetailScreen(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp)
+                    .padding(top = 8.dp, bottom = 2.dp)
             ) {
 
-                Button(onClick = { navController.navigate(
-                    route = AppScreens.ChatScreen.route +
-                            "/$explanation"
-                ) }
+                TextButton(onClick = {
+                    navController.navigate(
+                        route = AppScreens.ChatScreen.route +
+                                "/$explanation"
+                    )
+                }
                 ) {
-                    Text(text = "Aprende mas con HAL", color = Color.Black)
+                    Text(
+                        text = "Aprende mas con HAL", color = Color.White,
+                        fontSize = 18.sp
+                    )
 
                 }
             }
         }
     }
 }
-
 
 
 
