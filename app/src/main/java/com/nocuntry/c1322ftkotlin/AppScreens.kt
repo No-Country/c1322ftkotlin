@@ -9,6 +9,8 @@ sealed class AppScreens(val route: String) {
     object Profile : AppScreens("profile")
     object EditProfile : AppScreens("editProfile")
     object ChatScreen : AppScreens("chatscreen")
+    object Notifications : AppScreens("notifications")
+    object Logout : AppScreens("logout")
 
 }
 

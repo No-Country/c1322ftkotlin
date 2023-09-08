@@ -1,13 +1,23 @@
-package com.nocuntry.c1322ftkotlin.Profile
 
 data class UserProfile(
-    val firstName: String,
-    val lastName: String,
-    val email: String,
-    val summary: String, // Resumen del usuario
-    val followers: String, // Cambiado a String
-    val following: String, // Cambiado a String
-    val profileImageRes: Int // Cambiado a Int para referenciar un recurso de imagen
-)
+    var firstName: String,
+    var lastName: String,
+    var email: String,
+    var summary: String,
+    var followers: String,
+    var following: String,
+    var profileImageRes: Int
+) {
+    fun copyFrom(other: UserProfile) {
+        firstName = other.firstName
+        lastName = other.lastName
+        email = other.email
+        summary = other.summary
+        followers = other.followers
+        following = other.following
+        profileImageRes = other.profileImageRes
+    }
+}
+
 
 

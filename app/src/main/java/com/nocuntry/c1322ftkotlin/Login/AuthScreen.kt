@@ -74,7 +74,7 @@ fun AuthScreen(
                 navController.navigate(AppScreens.Home.route)
             }
         } catch (ex: Exception) {
-            Log.d("Orion App", "GoogleSignIn Falló")
+            Log.d("SkyWonders", "GoogleSignIn Falló")
         }
     }
 
@@ -91,7 +91,7 @@ fun AuthScreen(
         Spacer(modifier = Modifier.height(18.dp))
 
         Text(
-            text = "Welcome to Orion", //tambien se puede modificar el saludo de incio de la app
+            text = "Welcome to SkyWonders ", //tambien se puede modificar el saludo de incio de la app
             fontSize = 22.sp,
             color = Color.White,  // Aplicar el color de texto de bienvenida al color que se quiera
             fontStyle = FontStyle.Italic

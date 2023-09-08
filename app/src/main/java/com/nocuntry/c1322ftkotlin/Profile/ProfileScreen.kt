@@ -17,35 +17,43 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.nocuntry.c1322ftkotlin.AppScreens
-import com.nocuntry.c1322ftkotlin.Profile.UserProfile
+import com.nocuntry.c1322ftkotlin.Profile.ProfileViewModel
 import com.nocuntry.c1322ftkotlin.R
 
 @Composable
-fun ProfileScreen(navController: NavHostController) {
+fun ProfileScreen(
+    navController: NavHostController) {
 
-    val profileImageRes = R.drawable.baseline_account_circle_24
+    val viewModel: ProfileViewModel = viewModel()
 
+    // Datos del usuario
     val user = UserProfile(
-        firstName = "John",
-        lastName = "Doe",
-        email = "john.doe@example.com",
+        firstName = "Sebastian",
+        lastName = "Andrade",
+        email = "jsebas_andrade@example.com",
         summary = "Front-end Developer",
         followers = "100",
         following = "50",
         profileImageRes = R.drawable.baseline_account_circle_24
-
     )
 
-    var isMenuExpanded by remember { mutableStateOf(false) }
+    viewModel.loadProfileData(user)
+    val userInfo by viewModel.userInfo.collectAsState()
+
+
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Profile") },
+                backgroundColor = Color.Black, // Fondo negro
+                contentColor = Color.White, // Texto e iconos en blanco
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
@@ -56,40 +64,43 @@ fun ProfileScreen(navController: NavHostController) {
                 }
             )
         },
-        drawerContent = {
-            SideMenu(
-                userProfile = user,
-                profileImageRes = profileImageRes, // Pasa profileImageRes aquí
-                onLogout = {
-                    // Realizar acciones de logout aquí
-                    navController.navigate(AppScreens.Login.route)
-                }
-            )
-
-        },
         content = { innerPadding ->
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize()
             ) {
-                // Contenido de la pantalla de perfil
                 Spacer(modifier = Modifier.height(16.dp))
+
                 ProfileHeader(user)
+
                 Spacer(modifier = Modifier.height(16.dp))
-                ProfileContent()
+
+                ProfileContent(user) // Pasa el objeto UserProfile
+
+                // Botón para editar perfil
+                Button(
+                    onClick = {
+                        // Navegar a la pantalla de edición de perfil
+                        navController.navigate(AppScreens.EditProfile.route)
+                    },
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(16.dp)
+                ) {
+                    Text("Editar Perfil")
+                }
             }
         }
     )
 }
-
 
 @Composable
 fun ProfileHeader(userProfile: UserProfile) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.Blue) // Cambia el color de fondo según tus preferencias
+            .background(Color.DarkGray) // Cambia el color de fondo según tus preferencias
             .padding(16.dp)
     ) {
         Row(
@@ -100,7 +111,7 @@ fun ProfileHeader(userProfile: UserProfile) {
         ) {
             // Agrega la imagen del perfil aquí, asumiendo que userProfile tiene un campo para la imagen
             Image(
-                painter = painterResource(id = R.drawable.baseline_account_circle_24), // Reemplaza con la imagen de perfil adecuada
+                painter = painterResource(id = userProfile.profileImageRes), // Reemplaza con la imagen de perfil adecuada
                 contentDescription = null,
                 modifier = Modifier
                     .size(100.dp)
@@ -110,7 +121,7 @@ fun ProfileHeader(userProfile: UserProfile) {
             Column {
                 Text(
                     text = "${userProfile.firstName} ${userProfile.lastName}",
-                    fontSize = 20.sp,
+                    fontSize = 18.sp,
                     color = Color.White
                 )
                 Text(
@@ -118,84 +129,44 @@ fun ProfileHeader(userProfile: UserProfile) {
                     fontSize = 16.sp,
                     color = Color.White
                 )
+                Text(
+                    text = userProfile.summary,
+                    fontSize = 16.sp,
+                    color = Color.White
+                )
             }
         }
     }
 }
-
 @Composable
-fun ProfileContent() {
-    // Aquí puedes agregar el contenido adicional de tu perfil
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        items(10) {
-            // Agregar elementos de contenido aquí
-            Text(text = "Item $it", fontSize = 20.sp)
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-    }
-}
-
-@Composable
-fun SideMenu(
-userProfile: UserProfile,
-profileImageRes: Int, // Agrega profileImageRes como parámetro
-onLogout: () -> Unit
-) {
-    // Contenido del menú lateral
+fun ProfileContent(userProfile: UserProfile) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
+        modifier = Modifier.fillMaxSize()
     ) {
-        // Información del perfil
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { /* Navega a la página de perfil */ }
-        ) {
-            Image(
-                painter = painterResource(id = profileImageRes), // Usa profileImageRes aquí
-                contentDescription = null,
-                modifier = Modifier
-                    .size(100.dp)
-                    .clip(MaterialTheme.shapes.small)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "${userProfile.firstName} ${userProfile.lastName}",
-                fontSize = 18.sp
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Opciones de menú
         Text(
-            text = "Menu Item 1",
-            fontSize = 16.sp,
-            modifier = Modifier.clickable { /* Realiza la acción correspondiente */ }
+            text = "Summary:",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            modifier = Modifier.padding(8.dp)
         )
-        Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Menu Item 2",
+            text = userProfile.summary,
             fontSize = 16.sp,
-            modifier = Modifier.clickable { /* Realiza la acción correspondiente */ }
+            color = Color.White,
+            modifier = Modifier.padding(8.dp)
         )
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        // Botón de Logout
         Text(
-            text = "Logout",
+            text = "Followers: ${userProfile.followers}",
             fontSize = 16.sp,
-            color = Color.Red,
-            modifier = Modifier.clickable {
-                onLogout()
-            }
+            color = Color.White,
+            modifier = Modifier.padding(8.dp)
+        )
+        Text(
+            text = "Following: ${userProfile.following}",
+            fontSize = 16.sp,
+            color = Color.White,
+            modifier = Modifier.padding(8.dp)
         )
     }
 }

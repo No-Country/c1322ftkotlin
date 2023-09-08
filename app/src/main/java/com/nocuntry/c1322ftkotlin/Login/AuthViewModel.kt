@@ -1,5 +1,6 @@
 package com.nocuntry.c1322ftkotlin.Login
 
+import UserProfile
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
@@ -15,7 +16,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import com.nocuntry.c1322ftkotlin.Login.AuthState
 import com.nocuntry.c1322ftkotlin.Profile.ProfileEvent
-import com.nocuntry.c1322ftkotlin.Profile.UserProfile
 import com.nocuntry.c1322ftkotlin.R
 
 
@@ -42,19 +42,22 @@ class AuthViewModel : ViewModel() {
     private val _userProfile = mutableStateOf<UserProfile?>(null)
     val userProfile: State<UserProfile?> = _userProfile
 
+    private val _isUserAuthenticated = mutableStateOf(false)
+    val isUserAuthenticated: State<Boolean> = _isUserAuthenticated
+
     fun signInWithGoogle(credential: AuthCredential, home: () -> Unit) {
         viewModelScope.launch {
             try {
                 auth.signInWithCredential(credential).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d("Orion", "Logueado éxitoso con Google")
+                        Log.d("SkyWonders ", "Logueado éxitoso con Google")
                         home()
                     }
                 }.addOnFailureListener {
-                    Log.d("Orion App", "Error al loguear con Google")
+                    Log.d("SkyWonders ", "Error al loguear con Google")
                 }
             } catch (ex: Exception) {
-                Log.d("Orion", "Excepción al loguear con Google")
+                Log.d("SkyWonders ", "Excepción al loguear con Google")
                 authState.value = AuthState.Error("${ex.localizedMessage}")
             }
         }
@@ -86,7 +89,7 @@ class AuthViewModel : ViewModel() {
                     "0",
                     "0",
                     R.drawable.baseline_account_circle_24
-                            )
+                )
 
                 authState.value = AuthState.Success
             } catch (e: Exception) {
@@ -106,9 +109,14 @@ class AuthViewModel : ViewModel() {
         }
     }
 
+    fun onUserAuthenticated() {
+        _isUserAuthenticated.value = true
+    }
+
     fun logout() {
         auth.signOut()
         authState.value = AuthState.Unauthenticated
+        _isUserAuthenticated.value = false
     }
 
     fun toggleAuthMode() {

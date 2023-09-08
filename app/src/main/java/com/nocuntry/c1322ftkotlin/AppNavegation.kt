@@ -14,6 +14,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.AndroidUiDispatcher.Companion.Main
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -23,6 +24,8 @@ import androidx.navigation.navArgument
 import com.nocuntry.c1322ftkotlin.Login.AuthScreen
 import com.nocuntry.c1322ftkotlin.Login.AuthState
 import com.nocuntry.c1322ftkotlin.Profile.EditProfileScreen
+import com.nocuntry.c1322ftkotlin.Profile.NotificationsScreen
+import com.nocuntry.c1322ftkotlin.Profile.ProfileViewModel
 import com.nocuntry.c1322ftkotlin.model.NasaApiService
 import com.nocuntry.c1322ftkotlin.screen.ChatScreen
 import com.nocuntry.c1322ftkotlin.screen.DetailScreen
@@ -34,6 +37,7 @@ import com.nocuntry.c1322ftkotlin.screen.ZoomableImage
 @Composable
 fun AppNavigation(apiService: NasaApiService) {
     val navController = rememberNavController()
+
     val iaviewModel = viewModel<IAViewModel>()
 
     NavHost(
@@ -130,6 +134,26 @@ fun AppNavigation(apiService: NasaApiService) {
                 iaviewModel
             )
         }
+
+
+        composable(route = AppScreens.EditProfile.route) {
+            EditProfileScreen(
+                navController,
+                viewModel()
+            )
+        }
+
+        composable(route = AppScreens.Notifications.route) {
+            NotificationsScreen()
+        }
+
+        composable(route = AppScreens.Profile.route) {
+            // Aquí llamamos a ProfileScreen y pasamos el ViewModel
+            ProfileScreen(
+                navController,
+            )
+        }
     }
+
 }
 
