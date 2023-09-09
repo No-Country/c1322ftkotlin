@@ -47,7 +47,7 @@ fun ChatCard(
                 text = text,
                 color = Color.White,
                 fontSize = 20.sp,
-                modifier = Modifier.padding(4.dp)
+                modifier = Modifier.padding(10.dp)
             )
         }
 

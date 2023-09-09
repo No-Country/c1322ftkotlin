@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -47,6 +48,8 @@ fun DetailScreen(
     date: String?,
     viewModel: IAViewModel
 ) {
+
+    viewModel.Info = ""
 
     LazyColumn(
         modifier = Modifier
@@ -162,15 +165,26 @@ fun DetailScreen(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp)
+                    .padding(top = 8.dp, bottom = 2.dp)
             ) {
 
-                Button(onClick = { navController.navigate(
-                    route = AppScreens.ChatScreen.route +
-                            "/$explanation"
-                ) }
+                val buttonColor = ButtonDefaults.buttonColors(
+                    containerColor = Color.White,
+                    contentColor = Color.White
+                )
+
+                Button(
+                    colors = buttonColor,
+                    onClick = {
+                        navController.navigate(
+                            route = AppScreens.ChatScreen.route +
+                                    "/$explanation"
+                        )
+                    }
                 ) {
-                    Text(text = "Aprende mas con HAL", color = Color.Black)
+                    Text(
+                        text = "Aprende mas con HAL", color = Color.Black
+                    )
 
                 }
             }
