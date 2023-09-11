@@ -43,6 +43,7 @@ import androidx.navigation.NavController
 import com.matias141201.NASAImage.components.ChatCard
 import com.nocuntry.c1322ftkotlin.IAViewModel
 import com.nocuntry.c1322ftkotlin.R
+import com.nocuntry.c1322ftkotlin.components.QuestionCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,16 +62,10 @@ fun ChatScreen(
 
     val previousQuestionsAndAnswers = remember { mutableListOf<Pair<String, String>>() }
 
-    var isReady by remember {
-        mutableStateOf(false)
-    }
-
     var welcome by remember {
         mutableStateOf(true)
     }
 
-
-    var newQuestion = ""
 
     Column {
 
@@ -92,6 +87,8 @@ fun ChatScreen(
             modifier = Modifier.background(Color.Gray)
         )
 
+
+
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Bottom,
@@ -103,30 +100,42 @@ fun ChatScreen(
             }
 
             item {
+
+                if (viewModel.welcomeQuestion) {
+                    QuestionCard(explanation.toString(), viewModel)
+
+                }
+
                 if (welcome) {
                     chatList.add(
                         Pair(
-                            "Hola, mi nombre es HAL,soy una inteligencia artificial preparada para responder todas tus dudas astronómicas.",
+                            "Hola, mi nombre es HAL, soy una inteligencia artificial y estoy aquí para responder todas tus dudas astronómicas.",
                             Color.Black
                         )
                     )
                     welcome = false
                 }
 
-                if (isReady) {
-                    chatList.add(Pair(newQuestion, Color.Gray))
-                    isReady = false
+                if (viewModel.isReady) {
+                    chatList.add(Pair(viewModel.newQuestion, Color.Gray))
+                    viewModel.isReady = false
                 }
 
                 AnimationChat(isLoading = viewModel.loading, translateComplete = {
                     if (viewModel.Info.isNotEmpty()) {
                         val newAnswer = viewModel.Info
 
-                        if (!previousQuestionsAndAnswers.contains(Pair(newQuestion, newAnswer))) {
+                        if (!previousQuestionsAndAnswers.contains(
+                                Pair(
+                                    viewModel.newQuestion,
+                                    newAnswer
+                                )
+                            )
+                        ) {
 
                             chatList.add(Pair(newAnswer, Color.Black))
 
-                            previousQuestionsAndAnswers.add(Pair(newQuestion, newAnswer))
+                            previousQuestionsAndAnswers.add(Pair(viewModel.newQuestion, newAnswer))
                         }
                     }
                 })
@@ -162,11 +171,11 @@ fun ChatScreen(
 
                         IconButton(onClick = {
 
-                            newQuestion = question.value
-                            if (newQuestion.isNotBlank()) {
-                                viewModel.MoreInfo(explanation.toString(), newQuestion)
-                                newQuestion = question.value
-                                isReady = true
+                            viewModel.newQuestion = question.value
+                            if (viewModel.newQuestion.isNotBlank()) {
+                                viewModel.MoreInfo(explanation.toString(), viewModel.newQuestion)
+                                viewModel.newQuestion = question.value
+                                viewModel.isReady = true
                                 question.value = ""
                                 focusManager.clearFocus()
                             }
@@ -184,6 +193,7 @@ fun ChatScreen(
         }
     }
 }
+
 
 
 

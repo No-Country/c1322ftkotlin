@@ -98,6 +98,9 @@ fun Main(apiService: NasaApiService, navController: NavController, viewModel: IA
                             route = AppScreens.ChatScreen.route +
                                     "/$explanation"
                         )
+                        if (!viewModel.welcomeQuestion) {
+                            viewModel.welcomeQuestion = true
+                        }
 
                     },
                     shape = CircleShape,

@@ -30,6 +30,14 @@ class IAViewModel : ViewModel() {
 
     var error: Boolean by mutableStateOf(false)
 
+    var isReady: Boolean by mutableStateOf(false)
+
+    var welcomeQuestion: Boolean by mutableStateOf(true)
+
+    var newQuestion = ""
+
+
+
 
     private var openAI = OpenAI(token = Env.OPENIA_KEY, logging = LoggingConfig(LogLevel.All))
 
@@ -105,5 +113,6 @@ class IAViewModel : ViewModel() {
 
 
 }
+
 
 

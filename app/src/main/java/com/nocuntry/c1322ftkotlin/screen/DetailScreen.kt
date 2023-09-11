@@ -180,6 +180,7 @@ fun DetailScreen(
                             route = AppScreens.ChatScreen.route +
                                     "/$explanation"
                         )
+                        viewModel.welcomeQuestion  = false
                     }
                 ) {
                     Text(
