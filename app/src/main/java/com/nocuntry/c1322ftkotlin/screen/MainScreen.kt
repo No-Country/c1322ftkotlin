@@ -10,6 +10,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -41,7 +42,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -49,6 +52,7 @@ import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.nocuntry.c1322ftkotlin.AppScreens
 import com.nocuntry.c1322ftkotlin.IAViewModel
+import com.nocuntry.c1322ftkotlin.R
 import com.nocuntry.c1322ftkotlin.model.ApodList
 import com.nocuntry.c1322ftkotlin.model.ApodResponse
 import com.nocuntry.c1322ftkotlin.model.NasaApiService
@@ -62,6 +66,7 @@ fun transformDateFormat(inputDate: String): String {
 fun transformText(explanation: String): String {
     return explanation.replace("/", "\\")
 }
+
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.O)
@@ -80,44 +85,42 @@ fun Main(
 
     // Definir el estilo de texto directamente en la función
     val customTextStyle = TextStyle(
-        fontSize = 18.sp,
-        color = Color.Black // Color de texto personalizado
+        fontSize = 20.sp,
+        color = Color.White, // Color de texto personalizado
+        fontWeight = FontWeight.Bold
     )
 
     LaunchedEffect(apiService) {
         apodListState += ApodList(apiService).getApodList().value
     }
 
+
+    // Utiliza Scaffold para agregar el menú lateral
     Scaffold(
         topBar = {
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                color = Color.Black, // Color de fondo del TopAppBar
-                contentColor = Color.White // Color del contenido (texto e iconos)
-            ) {
-                TopAppBar(
-                    title = {
-                        Text(
-                            text = "SkyWonders",
-                            fontSize = 20.sp,
-                        )
-                    },
-                    navigationIcon = {
-                        IconButton(
-                            onClick = {
-                                isDrawerOpen = true
-                            }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Menu,
-                                contentDescription = "Menú",
-                            )
+            // Barra de la aplicación con el ícono del menú
+            TopAppBar(
+                title = {
+                    Text(text = "SkyWonders")
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = {
+                            // Abre o cierra el menú lateral al hacer clic en el ícono
+                            isDrawerOpen = !isDrawerOpen
                         }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Menu,
+                            contentDescription = "Abrir menú"
+                        )
                     }
-                )
-            }
+                }
+            )
         },
+        // Cuerpo del Scaffold
         content = {
+            // Contenido principal de la pantalla
             Column(
                 modifier = Modifier
                     .padding(8.dp)
@@ -192,61 +195,85 @@ fun Main(
                 )
             }
         },
+        // Menú lateral
         drawerContent = {
-            // Menú lateral
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = "Profile",
-                    color = Color.White,
-                    fontSize = 16.sp,
-                    modifier = Modifier
-                        .clickable {
-                            // Redireccionar al perfil
-                            navController.navigate(AppScreens.Profile.route) {
-                                popUpTo(navController.graph.startDestinationId)
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                            isDrawerOpen = false
+            // Contenido del menú lateral
+            LazyColumn {
+                // Cabecera del menú con una imagen
+                item {
+                    Image(
+                        painter = painterResource(id = R.drawable.header),
+                        contentDescription = "Cabecera del menú",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp) // Ajusta la altura según tus necesidades
+                    )
+                }
+
+                // Opción "Profile"
+                item {
+                    Text(
+                        text = "Profile",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        style = TextStyle(
+                            fontSize = 18.sp,
+                            color = Color.White // Color de texto en blanco
+                        ),
+                        onClick = {
+                            // Navegar a la pantalla de perfil o ejecutar la acción correspondiente
+                            navController.navigate(AppScreens.Profile.route)
                         }
-                        .padding(8.dp)
-                )
-                Text(
-                    text = "Notifications",
-                    color = Color.White,
-                    fontSize = 16.sp,
-                    modifier = Modifier
-                        .clickable {
-                            // Redireccionar a notificaciones
+                    )
+                }
+
+                // Opción "Notifications"
+                item {
+                    Text(
+                        text = "Notifications",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        style = TextStyle(
+                            fontSize = 18.sp,
+                            color = Color.White // Color de texto en blanco
+                        ),
+                        onClick = {
+                            // Navegar a la pantalla de notificaciones o ejecutar la acción correspondiente
                             navController.navigate(AppScreens.Notifications.route)
-                            isDrawerOpen = false
                         }
-                        .padding(8.dp)
-                )
-                Text(
-                    text = "Logout",
-                    color = Color.White,
-                    fontSize = 16.sp,
-                    modifier = Modifier
-                        .clickable {
-                            // Realizar el logout de la aplicación
+                    )
+                }
+
+                // Opción "Logout"
+                item {
+                    Text(
+                        text = "Logout",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        style = TextStyle(
+                            fontSize = 18.sp,
+                            color = Color.White // Color de texto en blanco
+                        ),
+                        onClick = {
+                            // Realizar la acción de cierre de sesión aquí
                             navController.navigate(AppScreens.Logout.route)
-                            isDrawerOpen = false
                         }
-                        .padding(8.dp)
-                )
-                // Otras opciones del menú
+                    )
+                }
             }
         },
-        drawerGesturesEnabled = isDrawerOpen, // Habilita gestos para abrir el menú
-        drawerBackgroundColor = Color.DarkGray, // Color de fondo del menú
-        drawerScrimColor = Color.Black.copy(alpha = 0.5f), // Color de fondo oscuro detrás del menú
-        drawerContentColor = Color.Black // Color del texto y los iconos del menú
+
+// Abre o cierra el menú lateral según el estado
+        drawerGesturesEnabled = isDrawerOpen,
+// Indica si el menú lateral está abierto o cerrado
+        drawerBackgroundColor = Color.Black // Cambia el color de fondo según tus preferencias
     )
 }
+
+
+
+
 

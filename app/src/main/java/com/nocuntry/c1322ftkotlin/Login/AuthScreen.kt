@@ -6,39 +6,27 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.navigation.NavHostController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.firebase.auth.FirebaseAuth
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.flow.StateFlow
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.GoogleAuthProvider
-import com.nocuntry.c1322ftkotlin.Login.AuthState
 import com.nocuntry.c1322ftkotlin.AppScreens
 import com.nocuntry.c1322ftkotlin.R
 import com.nocuntry.c1322ftkotlin.ui.theme.MyButtonColor
@@ -46,6 +34,7 @@ import com.nocuntry.c1322ftkotlin.ui.theme.MyButtonColor
 @Composable
 fun AuthScreen(
     navController: NavHostController,
+    context: Context,
     onAuthStateChanged: (authState: AuthState) -> Unit
 ) {
 
@@ -63,6 +52,7 @@ fun AuthScreen(
     LaunchedEffect(authState) { // No necesitas authStateFlow.value.collect aquí
         onAuthStateChanged(authState)
     }
+
     val googleSignInLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -70,14 +60,15 @@ fun AuthScreen(
         try {
             val account = task.getResult(ApiException::class.java)
             val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-            viewModel.signInWithGoogle(credential) {
+
+            // Llama a signInWithGoogle pasando el contexto
+            viewModel.signInWithGoogle(credential, context) {
                 navController.navigate(AppScreens.Home.route)
             }
         } catch (ex: Exception) {
             Log.d("SkyWonders", "GoogleSignIn Falló")
         }
     }
-
 
     Column(
         modifier = Modifier
@@ -87,27 +78,20 @@ fun AuthScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Spacer(modifier = Modifier.height(18.dp))
-
         Text(
-            text = "Welcome to SkyWonders ", //tambien se puede modificar el saludo de incio de la app
+            text = "Welcome to SkyWonders ",
             fontSize = 22.sp,
-            color = Color.White,  // Aplicar el color de texto de bienvenida al color que se quiera
+            color = Color.White,
             fontStyle = FontStyle.Italic
         )
-
         Spacer(modifier = Modifier.height(18.dp))
-
         Image(
             painter = painterResource(id = R.drawable.logo),
             contentDescription = null,
             modifier = Modifier.size(100.dp)
         )
-
         Spacer(modifier = Modifier.height(25.dp))
-
-        // Botón para crear una cuenta
         Button(
             onClick = {
                 navController.navigate(AppScreens.Register.route)
@@ -120,17 +104,13 @@ fun AuthScreen(
             Text(
                 "Create An Account",
                 style = TextStyle(
-                    fontWeight = FontWeight.Bold, // Texto en negrita
-                    fontSize = 18.sp, // Tamaño del texto
-                    color = Color.White // Color de texto blanco
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    color = Color.White
                 )
             )
         }
-
         Spacer(modifier = Modifier.height(25.dp))
-
-
-        //Boton inicio de sesion con Google
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -155,19 +135,18 @@ fun AuthScreen(
                 contentDescription = null,
                 modifier = Modifier
                     .size(30.dp)
-                    .padding(end = 10.dp), // Espacio entre la imagen y el texto
+                    .padding(end = 10.dp),
             )
             Text(
                 "Login with Google",
                 style = TextStyle(
-                    fontWeight = FontWeight.Bold, // Texto en negrita
-                    fontSize = 18.sp, // Tamaño del texto
-                    color = Color.White // Color de texto blanco
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    color = Color.White
                 )
             )
         }
     }
-
     if (showWelcomeMessage) {
         AlertDialog(
             onDismissRequest = {
@@ -191,6 +170,7 @@ fun AuthScreen(
         )
     }
 }
+
 
 
 

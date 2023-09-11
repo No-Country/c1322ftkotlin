@@ -1,6 +1,7 @@
 package com.nocuntry.c1322ftkotlin.Login
 
 import UserProfile
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
@@ -11,14 +12,13 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.nocuntry.c1322ftkotlin.AppScreens
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import com.nocuntry.c1322ftkotlin.Login.AuthState
 import com.nocuntry.c1322ftkotlin.Profile.ProfileEvent
 import com.nocuntry.c1322ftkotlin.R
 
 
+val PREFS_NAME = "MyPrefsFile"
+val PREF_IS_LOGGED_IN = "isLoggedIn"
 class AuthViewModel : ViewModel() {
     private val auth = FirebaseAuth.getInstance()
     val currentUser = auth.currentUser
@@ -45,23 +45,30 @@ class AuthViewModel : ViewModel() {
     private val _isUserAuthenticated = mutableStateOf(false)
     val isUserAuthenticated: State<Boolean> = _isUserAuthenticated
 
-    fun signInWithGoogle(credential: AuthCredential, home: () -> Unit) {
+
+    fun signInWithGoogle(credential: AuthCredential, context: Context, home: () -> Unit) {
         viewModelScope.launch {
             try {
                 auth.signInWithCredential(credential).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.d("SkyWonders ", "Logueado éxitoso con Google")
+                        Log.d("SkyWonders", "Logueado éxitoso con Google")
+
+                        // Guarda el estado de inicio de sesión en SharedPreferences
+                        saveLoginStatus(context, true)
+
                         home()
                     }
                 }.addOnFailureListener {
-                    Log.d("SkyWonders ", "Error al loguear con Google")
+                    Log.d("SkyWonders", "Error al loguear con Google")
                 }
             } catch (ex: Exception) {
-                Log.d("SkyWonders ", "Excepción al loguear con Google")
+                Log.d("SkyWonders", "Excepción al loguear con Google")
                 authState.value = AuthState.Error("${ex.localizedMessage}")
             }
         }
     }
+
+
 
     fun register(
         firstName: String,
@@ -139,5 +146,14 @@ class AuthViewModel : ViewModel() {
         _navigateToProfile.value = false
         _navigateToEditProfile.value = false
     }
+
+    fun saveLoginStatus(context: Context, isLoggedIn: Boolean) {
+        val sharedPrefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        with(sharedPrefs.edit()) {
+            putBoolean(PREF_IS_LOGGED_IN, isLoggedIn)
+            apply()
+        }
+    }
+
 }
 

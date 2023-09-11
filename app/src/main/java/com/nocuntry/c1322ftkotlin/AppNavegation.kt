@@ -54,26 +54,25 @@ fun AppNavigation(apiService: NasaApiService) {
         }
 
         composable(route = AppScreens.Login.route) {
-            AuthScreen(navController) { authState: AuthState ->
+            AuthScreen(navController, context = navController.context) { authState: AuthState ->
                 when (authState) {
                     AuthState.Authenticated -> {
                         navController.navigate(AppScreens.Home.route)
                     }
 
                     AuthState.Unauthenticated -> {
-//                        Text("Usuario no autenticado", color = Color.Red)
-                        // Se puede o no mostrar un mensaje  aquí
+                        // Puedes manejar un usuario no autenticado aquí si es necesario
                     }
 
                     is AuthState.Error -> {
-                        // Manejar el caso de autenticación con error
-//                        Text("Error de autenticación: ${authState.errorMessage}", color = Color.Red)
+                        // Manejar el caso de autenticación con error si es necesario
                     }
 
                     else -> Unit
                 }
             }
         }
+
         composable(route = AppScreens.Profile.route) {
             ProfileScreen(navController)
         }
