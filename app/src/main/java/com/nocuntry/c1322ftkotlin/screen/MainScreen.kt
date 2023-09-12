@@ -11,10 +11,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,7 +32,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -56,6 +59,13 @@ import com.nocuntry.c1322ftkotlin.R
 import com.nocuntry.c1322ftkotlin.model.ApodList
 import com.nocuntry.c1322ftkotlin.model.ApodResponse
 import com.nocuntry.c1322ftkotlin.model.NasaApiService
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.Text
+import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.ui.text.input.TextFieldValue
+
 
 fun transformDateFormat(inputDate: String): String {
     val year = inputDate.substring(2, 4)
@@ -197,81 +207,115 @@ fun Main(
         },
         // Menú lateral
         drawerContent = {
-            // Contenido del menú lateral
-            LazyColumn {
-                // Cabecera del menú con una imagen
-                item {
-                    Image(
-                        painter = painterResource(id = R.drawable.header),
-                        contentDescription = "Cabecera del menú",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp) // Ajusta la altura según tus necesidades
-                    )
-                }
+            // Cabecera del menú con una imagen
+            Image(
+                painter = painterResource(id = R.drawable.header),
+                contentDescription = "Cabecera del menú",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp) // Ajusta la altura según tus necesidades
+            )
 
-                // Opción "Profile"
-                item {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Center
+            ) {
+                // Opción "Profile" con icono
+                Row(
+                    modifier = Modifier
+                        .clickable {
+                            // Redireccionar al perfil
+                            navController.navigate(AppScreens.Profile.route) {
+                                popUpTo(navController.graph.startDestinationId)
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                            isDrawerOpen = false
+                        }
+                        .padding(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Person, // Icono de perfil
+                        contentDescription = "Profile",
+                        modifier = Modifier.size(24.dp),
+                        tint = Color.White // Color del icono
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+
                     Text(
                         text = "Profile",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        style = TextStyle(
-                            fontSize = 18.sp,
-                            color = Color.White // Color de texto en blanco
-                        ),
-                        onClick = {
-                            // Navegar a la pantalla de perfil o ejecutar la acción correspondiente
-                            navController.navigate(AppScreens.Profile.route)
-                        }
+                        color = Color.White,
+                        fontSize = 16.sp
                     )
                 }
 
-                // Opción "Notifications"
-                item {
+                // Opción "Notifications" con icono
+                Row(
+                    modifier = Modifier
+                        .clickable {
+                            // Redireccionar a notificaciones
+                            navController.navigate(AppScreens.Notifications.route)
+                            isDrawerOpen = false
+                        }
+                        .padding(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Notifications, // Icono de notificaciones
+                        contentDescription = "Notifications",
+                        modifier = Modifier.size(24.dp),
+                        tint = Color.White // Color del icono
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "Notifications",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        style = TextStyle(
-                            fontSize = 18.sp,
-                            color = Color.White // Color de texto en blanco
-                        ),
-                        onClick = {
-                            // Navegar a la pantalla de notificaciones o ejecutar la acción correspondiente
-                            navController.navigate(AppScreens.Notifications.route)
-                        }
+                        color = Color.White,
+                        fontSize = 16.sp
                     )
                 }
 
-                // Opción "Logout"
-                item {
+                // Opción "Logout" con icono
+                Row(
+                    modifier = Modifier
+                        .clickable {
+                            // Realizar el logout de la aplicación
+                            navController.navigate(AppScreens.Logout.route)
+                            isDrawerOpen = false
+                        }
+                        .padding(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Logout, // Icono de logout
+                        contentDescription = "Logout",
+                        modifier = Modifier.size(24.dp),
+                        tint = Color.White // Color del icono
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "Logout",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        style = TextStyle(
-                            fontSize = 18.sp,
-                            color = Color.White // Color de texto en blanco
-                        ),
-                        onClick = {
-                            // Realizar la acción de cierre de sesión aquí
-                            navController.navigate(AppScreens.Logout.route)
-                        }
+                        color = Color.White,
+                        fontSize = 16.sp
                     )
                 }
+                // Otras opciones del menú
             }
         },
-
-// Abre o cierra el menú lateral según el estado
-        drawerGesturesEnabled = isDrawerOpen,
-// Indica si el menú lateral está abierto o cerrado
-        drawerBackgroundColor = Color.Black // Cambia el color de fondo según tus preferencias
+        drawerGesturesEnabled = isDrawerOpen, // Habilita gestos para abrir el menú
+        drawerBackgroundColor = Color.Black, // Color de fondo del menú
+        drawerScrimColor = Color.Black.copy(alpha = 0.5f), // Color de fondo oscuro detrás del menú
+        drawerContentColor = Color.White // Color del texto y los iconos del menú
     )
+
 }
+
+fun Text(text: String, modifier: Modifier, style: TextStyle, onClick: () -> Unit) {
+
+}
+
 
 
 

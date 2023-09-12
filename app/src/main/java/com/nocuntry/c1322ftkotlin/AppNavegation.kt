@@ -1,5 +1,7 @@
 package com.nocuntry.c1322ftkotlin
 
+import CreatePostScreen
+import Post
 import ProfileScreen
 import RegisterScreen
 import android.os.Build
@@ -31,6 +33,7 @@ import com.nocuntry.c1322ftkotlin.screen.ChatScreen
 import com.nocuntry.c1322ftkotlin.screen.DetailScreen
 import com.nocuntry.c1322ftkotlin.screen.Main
 import com.nocuntry.c1322ftkotlin.screen.ZoomableImage
+import com.nocuntry.c1322ftkotlin.Profile.PostViewModel
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -149,9 +152,18 @@ fun AppNavigation(apiService: NasaApiService) {
         composable(route = AppScreens.Profile.route) {
             // Aquí llamamos a ProfileScreen y pasamos el ViewModel
             ProfileScreen(
-                navController,
+                navController
             )
         }
+
+        // Define una nueva ruta para la pantalla de creación de publicaciones
+        composable(route = AppScreens.CreatePost.route) {
+            val viewModel: PostViewModel = viewModel() // Obtén una instancia de PostViewModel
+            val posts = viewModel.posts // Accede a la propiedad posts del ViewModel
+            CreatePostScreen(navController, posts)
+        }
+
+
     }
 
 }

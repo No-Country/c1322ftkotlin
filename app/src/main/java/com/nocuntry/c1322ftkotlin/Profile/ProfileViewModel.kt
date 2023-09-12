@@ -24,9 +24,9 @@ class ProfileViewModel : ViewModel() {
     fun updateUserInfo(newUserInfo: UserInfo) {
         _userInfo.value = newUserInfo
     }
-}
 
-data class UserInfo(
-    val name: String = "",
-    val email: String = ""
-)
+    data class UserInfo(
+        val name: String = "",
+        val email: String = ""
+    )
+}

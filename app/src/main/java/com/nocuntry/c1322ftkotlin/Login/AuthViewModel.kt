@@ -95,6 +95,7 @@ class AuthViewModel : ViewModel() {
                     "hello",
                     "0",
                     "0",
+                    R.drawable.night_profile,
                     R.drawable.baseline_account_circle_24
                 )
 

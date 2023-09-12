@@ -82,7 +82,7 @@ fun EditProfileScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Botón de guardar
+                /*// Botón de guardar
                 Button(
                     onClick = {
                         // Guardar los cambios
@@ -92,7 +92,7 @@ fun EditProfileScreen(
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
                     Text("Guardar")
-                }
+                }*/
 
                 Spacer(modifier = Modifier.height(16.dp))
 

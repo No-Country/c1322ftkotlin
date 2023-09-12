@@ -11,6 +11,7 @@ sealed class AppScreens(val route: String) {
     object ChatScreen : AppScreens("chatscreen")
     object Notifications : AppScreens("notifications")
     object Logout : AppScreens("logout")
+    object CreatePost : AppScreens("create_post")
 
 }
 
