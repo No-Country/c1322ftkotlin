@@ -19,3 +19,6 @@ Genera una API Key en **[https://platform.openai.com](https://platform.openai.co
 
 Descarga el proyecto, ábrelo en Android Studio y añade la API Key en el fichero `conf/Env.kt`
 
+```
+ const val OPENIA_KEY = "MI_KEY"
+```
