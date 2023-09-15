@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter
 class ApodList(private val apiService: NasaApiService) {
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun getApodList(): State<List<ApodResponse>> {
-        val startDate = LocalDate.now().minusDays(10)
+        val startDate = LocalDate.now().minusDays(30)
         val endDate = LocalDate.now()
         val dateRange = (0..endDate.toEpochDay() - startDate.toEpochDay()).map {
             startDate.plusDays(it)
