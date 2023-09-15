@@ -11,3 +11,14 @@ Con SkyWonders, tienes la oportunidad de entablar conversaciones con HAL, nuestr
 ### Diana Cuta 
 ### Matias Rodriguez Ovejero
 
+## Requisitos
+
+Genera una API Key en **[https://platform.openai.com](https://platform.openai.com/)** *(User/API Keys/Create new secret key)*.
+
+## Ejecución
+
+Descarga el proyecto, ábrelo en Android Studio y añade la API Key en el fichero `conf/Env.kt`
+
+```
+ const val OPENIA_KEY = "MI_KEY"
+```
